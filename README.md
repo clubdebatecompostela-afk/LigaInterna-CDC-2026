@@ -1,270 +1,238 @@
 # LigaInterna-CDC-2026
 Ranking oficial Liga Interna CDC 2026
+[ranking_de_la_liga_de_debate (1).html](https://github.com/user-attachments/files/33396643/ranking_de_la_liga_de_debate.1.html)
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-900 text-slate-100">
+<html lang="es" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Clasificación - Liga de Debate</title>
+    <title>Ranking Liga de Debate</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
                     colors: {
                         brand: {
                             50: '#f0f7ff',
                             100: '#e0effe',
-                            500: '#0284c7',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                            950: '#082f49',
+                            500: '#1d4ed8',
+                            600: '#1e40af',
+                            700: '#1d3557',
+                            800: '#0f172a'
                         }
                     }
                 }
             }
         }
     </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="h-full font-sans antialiased bg-slate-900 text-slate-100 flex flex-col min-h-screen">
+<body class="h-full flex flex-col text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900">
 
-    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded bg-brand-700 flex items-center justify-center font-bold text-white text-sm tracking-wider">
-                    LD
+    <header class="bg-slate-900 text-white shadow-md border-b border-slate-800 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-trophy text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-base font-semibold text-slate-100 leading-none">Liga Oficial de Debate</h1>
-                    <p class="text-xs text-slate-400 mt-1">Panel General de Clasificación y Resultados</p>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Liga de Debate</h1>
+                    <p class="text-xs text-slate-400 font-medium">Clasificación Oficial y Puntuación de Oradores</p>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-3">
-                <button id="btn-admin-access" onclick="openAdminModal()" class="text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-lg border border-slate-700 transition flex items-center gap-2">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    Panel Administrador
+
+            <div class="flex items-center gap-2">
+                <div id="adminBadge" class="hidden text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-shield"></i> Modo Administrador
+                </div>
+                <button id="adminToggleBtn" onclick="toggleAdminMode()" class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-lock" id="adminBtnIcon"></i>
+                    <span id="adminBtnText">Panel Administrador</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
-        <!-- Metrics Summary Section -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-sm">
-                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Líder Actual</p>
-                <p id="stat-leader" class="text-xl font-bold text-slate-100 mt-2">--</p>
-                <span class="text-xs text-brand-500 font-medium mt-1 block">Posición 1 en la clasificación</span>
-            </div>
-            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-sm">
-                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Equipos</p>
-                <p id="stat-total-teams" class="text-2xl font-bold text-slate-100 mt-2">0</p>
-                <span class="text-xs text-slate-400 mt-1 block">Participantes registrados</span>
-            </div>
-            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-sm">
-                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Debates Disputados</p>
-                <p id="stat-total-debates" class="text-2xl font-bold text-slate-100 mt-2">0</p>
-                <span class="text-xs text-slate-400 mt-1 block">Total de enfrentamientos</span>
-            </div>
-            <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-sm">
-                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Media Puntos Orador</p>
-                <p id="stat-avg-speaker" class="text-2xl font-bold text-slate-100 mt-2">0.0</p>
-                <span class="text-xs text-slate-400 mt-1 block">Promedio global por equipo</span>
-            </div>
-        </section>
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
-        <!-- Navigation Tabs & Toolbar -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-4">
-            <nav class="flex space-x-2">
-                <button id="tab-btn-ranking" onclick="switchTab('ranking')" class="px-4 py-2 text-sm font-medium rounded-lg bg-brand-700 text-white transition">Clasificación General</button>
-                <button id="tab-btn-rules" onclick="switchTab('rules')" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition">Criterios y Normativa</button>
-            </nav>
+        <!-- Controls & Filters Bar -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+            <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" oninput="filterData()" placeholder="Buscar equipo, institución u orador..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
+            </div>
 
-            <div id="ranking-controls" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <div class="relative">
-                    <input type="text" id="search-input" oninput="renderPublicTable()" placeholder="Buscar equipo..." class="w-full sm:w-64 bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-1.5 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-500">
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="exportCSV()" class="flex-1 sm:flex-none text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-lg transition">Exportar CSV</button>
-                    <button onclick="exportPDF()" class="flex-1 sm:flex-none text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-lg transition">Exportar PDF</button>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="exportJSON()" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300/70 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-download text-slate-500"></i> Exportar JSON
+                </button>
+                <button onclick="exportCSV()" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300/70 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-csv text-slate-500"></i> Exportar CSV
+                </button>
+
+                <!-- Admin Action Controls -->
+                <div id="adminActions" class="hidden flex items-center gap-2 pl-2 border-l border-slate-200">
+                    <label class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300/70 transition-colors cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-upload text-slate-500"></i> Importar
+                        <input type="file" id="importInput" onchange="importJSON(event)" accept=".json" class="hidden">
+                    </label>
+                    <button onclick="openAddModal()" class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-plus"></i> Añadir Equipo
+                    </button>
                 </div>
             </div>
         </div>
 
-        <section id="tab-ranking" class="space-y-4">
-            <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-900/80 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                                <th class="py-3.5 px-4 text-center w-16">Pos</th>
-                                <th class="py-3.5 px-4">Equipo / Debatiente</th>
-                                <th class="py-3.5 px-4 text-center">Debates</th>
-                                <th class="py-3.5 px-4 text-center">Ganados</th>
-                                <th class="py-3.5 px-4 text-center">Perdidos</th>
-                                <th class="py-3.5 px-4 text-center">Pts. Orador</th>
-                                <th class="py-3.5 px-4 text-center font-bold text-slate-200">Puntuación Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="public-table-body" class="divide-y divide-slate-800/60 text-sm">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="tab-rules" class="hidden space-y-6 max-w-4xl">
-            <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-6">
+        <!-- Teams Leaderboard Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
                 <div>
-                    <h2 class="text-lg font-semibold text-slate-100">Criterios de Clasificación y Puntuación</h2>
-                    <p class="text-sm text-slate-400 mt-1">Normativa oficial utilizada para la determinación de posiciones en la tabla general.</p>
+                    <h2 class="font-bold text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-award text-amber-400"></i> Ranking General de Equipos
+                    </h2>
+                    <p class="text-xs text-slate-300">Ordenado por victorias y puntos totales acumulados</p>
                 </div>
+                <span id="teamCountBadge" class="text-xs bg-slate-800 text-slate-200 px-3 py-1 rounded-full font-semibold border border-slate-700">0 Equipos</span>
+            </div>
 
-                <div class="space-y-4 text-sm text-slate-300 border-t border-slate-800 pt-4">
-                    <div class="flex items-start gap-3">
-                        <div class="w-6 h-6 rounded bg-slate-800 text-brand-500 font-bold flex items-center justify-center shrink-0 text-xs">1</div>
-                        <div>
-                            <strong class="text-slate-100">Puntuación Total por Victoria:</strong>
-                            <p class="text-slate-400 mt-0.5">Cada debate ganado otorga 3 puntos a la clasificación general. Los debates perdidos no otorgan puntos a la clasificación general.</p>
-                        </div>
-                    </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800 text-slate-200 text-xs font-bold uppercase tracking-wider border-b border-slate-700">
+                            <th class="py-3.5 px-4 text-center w-16">Pos</th>
+                            <th class="py-3.5 px-6">Equipo / Institución</th>
+                            <th class="py-3.5 px-4 text-center">Debates</th>
+                            <th class="py-3.5 px-4 text-center">Ganados</th>
+                            <th class="py-3.5 px-4 text-center">Perdidos</th>
+                            <th class="py-3.5 px-4 text-center bg-slate-700/50">Pts. Orador</th>
+                            <th class="py-3.5 px-4 text-center text-amber-300 bg-slate-700">Puntos Totales</th>
+                            <th class="admin-only py-3.5 px-4 text-center w-28 hidden">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamsTableBody" class="divide-y divide-slate-200 text-sm font-medium text-slate-700">
+                        <!-- Dynamic rows generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                    <div class="flex items-start gap-3">
-                        <div class="w-6 h-6 rounded bg-slate-800 text-brand-500 font-bold flex items-center justify-center shrink-0 text-xs">2</div>
-                        <div>
-                            <strong class="text-slate-100">Criterio de Desempate (Puntos de Orador / Speaker Points):</strong>
-                            <p class="text-slate-400 mt-0.5">En caso de empate a puntos totales entre dos o más equipos, la posición en la tabla se determinará en función de la suma acumulada de los Puntos de Orador otorgados por el panel de jueces en cada ronda.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-3">
-                        <div class="w-6 h-6 rounded bg-slate-800 text-brand-500 font-bold flex items-center justify-center shrink-0 text-xs">3</div>
-                        <div>
-                            <strong class="text-slate-100">Actualización de Datos:</strong>
-                            <p class="text-slate-400 mt-0.5">Los resultados son validados e introducidos por el comité de organización al finalizar cada ronda de debates.</p>
-                        </div>
-                    </div>
+        <!-- Speakers Top Ranking -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <h2 class="font-bold text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-microphone text-blue-400"></i> Mejores Oradores
+                    </h2>
+                    <p class="text-xs text-slate-300">Puntuaciones individuales destacadas</p>
                 </div>
             </div>
-        </section>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800 text-slate-200 text-xs font-bold uppercase tracking-wider border-b border-slate-700">
+                            <th class="py-3.5 px-4 text-center w-16">Pos</th>
+                            <th class="py-3.5 px-6">Nombre del Orador</th>
+                            <th class="py-3.5 px-6">Equipo / Institución</th>
+                            <th class="py-3.5 px-4 text-center text-blue-300 bg-slate-700">Puntuación Individual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="speakersTableBody" class="divide-y divide-slate-200 text-sm font-medium text-slate-700">
+                        <!-- Dynamic rows generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
     </main>
 
-    <footer class="bg-slate-950 border-t border-slate-800 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-            Plataforma de Gestión de Ranking de Debate &copy; 2026. Todos los derechos reservados.
-        </div>
-    </footer>
-
-    <div id="modal-auth" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 class="text-base font-semibold text-slate-100">Acceso Administrativo</h3>
-            <p class="text-xs text-slate-400 mt-1">Introduzca la clave de acceso para gestionar la liga.</p>
-            
-            <div class="mt-4">
-                <input type="password" id="admin-pin-input" placeholder="Clave de acceso (por defecto: 1234)" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
-                <p id="auth-error" class="text-xs text-red-400 mt-2 hidden">Clave incorrecta. Inténtelo de nuevo.</p>
-            </div>
-
-            <div class="mt-6 flex justify-end gap-2">
-                <button onclick="closeAuthModal()" class="px-3.5 py-1.5 text-xs text-slate-400 hover:text-slate-200">Cancelar</button>
-                <button onclick="verifyAdminPin()" class="px-4 py-1.5 text-xs bg-brand-700 hover:bg-brand-600 text-white font-medium rounded-lg transition">Ingresar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-admin-panel" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center hidden p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-5xl my-8 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
-            <!-- Modal Header -->
-            <div class="px-6 py-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
-                <div>
-                    <h3 class="text-base font-semibold text-slate-100">Panel de Administración de la Liga</h3>
-                    <p class="text-xs text-slate-400">Edición de equipos, puntuaciones y gestión de copias de seguridad.</p>
-                </div>
-                <button onclick="closeAdminPanel()" class="text-slate-400 hover:text-slate-200 p-1">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <!-- Add/Edit Team Modal -->
+    <div id="teamModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-100">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Añadir Nuevo Equipo</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <!-- Modal Content -->
-            <div class="p-6 overflow-y-auto space-y-6 flex-1">
-                
-                <!-- Add Team Form -->
-                <div class="bg-slate-950 border border-slate-800 rounded-lg p-4">
-                    <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">Añadir Nuevo Equipo</h4>
-                    <form id="add-team-form" onsubmit="handleAddTeam(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                        <div class="sm:col-span-5">
-                            <input type="text" id="new-team-name" required placeholder="Nombre del Equipo o Debatiente" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
-                        </div>
-                        <div class="sm:col-span-2">
-                            <input type="number" id="new-team-wins" min="0" value="0" placeholder="Ganados" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
-                        </div>
-                        <div class="sm:col-span-2">
-                            <input type="number" id="new-team-losses" min="0" value="0" placeholder="Perdidos" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
-                        </div>
-                        <div class="sm:col-span-2">
-                            <input type="number" step="0.1" id="new-team-speaker" min="0" value="0" placeholder="Pts Orador" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-brand-500">
-                        </div>
-                        <div class="sm:col-span-1">
-                            <button type="submit" class="w-full h-full bg-brand-700 hover:bg-brand-600 text-white text-xs font-medium py-1.5 rounded-lg transition">Añadir</button>
-                        </div>
-                    </form>
+            <form id="teamForm" onsubmit="handleFormSubmit(event)" class="space-y-4 mt-4">
+                <input type="hidden" id="editingTeamId">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nombre del Equipo</label>
+                    <input type="text" id="teamName" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                 </div>
 
-                <!-- Admin Management Table -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Gestión de Equipos Existentes</h4>
-                    <div class="bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-slate-900 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                                        <th class="py-2.5 px-3">Equipo</th>
-                                        <th class="py-2.5 px-3 text-center">Ganados</th>
-                                        <th class="py-2.5 px-3 text-center">Perdidos</th>
-                                        <th class="py-2.5 px-3 text-center">Pts. Orador</th>
-                                        <th class="py-2.5 px-3 text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-table-body" class="divide-y divide-slate-800 text-xs">
-                                    <!-- Dynamic content -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Institución / Universidad</label>
+                    <input type="text" id="institution" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                 </div>
 
-                <!-- Backup & Reset Controls -->
-                <div class="border-t border-slate-800 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-2">
-                        <button onclick="exportJSON()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg transition">Exportar Respaldos (JSON)</button>
-                        <button onclick="document.getElementById('import-file-input').click()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg transition">Importar Respaldos (JSON)</button>
-                        <input type="file" id="import-file-input" accept=".json" onchange="importJSON(event)" class="hidden">
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Debates</label>
+                        <input type="number" id="debatesCount" min="0" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                     </div>
                     <div>
-                        <button onclick="resetDefaultData()" class="text-xs bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/50 px-3 py-1.5 rounded-lg transition">Restablecer Datos por Defecto</button>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Ganados</label>
+                        <input type="number" id="winsCount" min="0" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Perdidos</label>
+                        <input type="number" id="lossesCount" min="0" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                     </div>
                 </div>
 
-            </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Pts. Orador</label>
+                        <input type="number" step="0.1" id="speakerPoints" min="0" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Puntos Totales</label>
+                        <input type="number" step="0.1" id="totalPoints" min="0" required class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+                </div>
 
-            <!-- Modal Footer -->
-            <div class="px-6 py-3 bg-slate-950 border-t border-slate-800 flex justify-end">
-                <button onclick="closeAdminPanel()" class="px-4 py-1.5 text-xs bg-brand-700 hover:bg-brand-600 text-white font-medium rounded-lg transition">Guardar y Cerrar</button>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Orador Principal / Destacado</label>
+                    <input type="text" id="bestSpeaker" placeholder="Opcional" class="w-full px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
+
+                <div class="pt-4 flex justify-end gap-2 border-t border-slate-100">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-sm">Guardar Equipo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Modal Prompt -->
+    <div id="passwordModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4">
+            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto">
+                <i class="fa-solid fa-shield-halved text-xl"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-slate-900">Acceso Administrador</h3>
+                <p class="text-xs text-slate-500 mt-1">Por favor, introduce la clave de acceso para gestionar el ranking.</p>
+            </div>
+            <div>
+                <input type="password" id="adminPasswordInput" placeholder="Contraseña de administrador" class="w-full text-center px-3.5 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <p id="passwordError" class="text-xs text-red-600 font-medium mt-1 hidden">Contraseña incorrecta. Inténtalo de nuevo.</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closePasswordModal()" class="flex-1 py-2 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Cancelar</button>
+                <button onclick="verifyPassword()" class="flex-1 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700">Entrar</button>
             </div>
         </div>
     </div>
@@ -272,265 +240,257 @@ Ranking oficial Liga Interna CDC 2026
     <script>
         // Initial Mock Data
         const initialTeams = [
-            { id: "1", name: "Sociedad de Debate A", wins: 5, losses: 0, speakerPoints: 342.5 },
-            { id: "2", name: "Club Niccolò Machiavelli", wins: 4, losses: 1, speakerPoints: 338.0 },
-            { id: "3", name: "Ateneo Universitario", wins: 3, losses: 2, speakerPoints: 325.0 },
-            { id: "4", name: "Foro Argumenta", wins: 2, losses: 3, speakerPoints: 318.5 },
-            { id: "5", name: "Debatientes del Norte", wins: 1, losses: 4, speakerPoints: 304.0 },
-            { id: "6", name: "Academia Dialéctica", wins: 0, losses: 5, speakerPoints: 295.0 }
+            { id: '1', name: "Ateneo Político", institution: "Univ. Central", debates: 5, wins: 4, losses: 1, speakerPoints: 382.5, totalPoints: 12, bestSpeaker: "Sofía Martínez" },
+            { id: '2', name: "Dialéctica Magna", institution: "Univ. de las Artes", debates: 5, wins: 4, losses: 1, speakerPoints: 379.0, totalPoints: 11, bestSpeaker: "Carlos Mendoza" },
+            { id: '3', name: "Oradores del Norte", institution: "Inst. Tecnológico", debates: 5, wins: 3, losses: 2, speakerPoints: 365.0, totalPoints: 9, bestSpeaker: "Elena Rostova" },
+            { id: '4', name: "Agora Abierta", institution: "Univ. Metropolitana", debates: 5, wins: 2, losses: 3, speakerPoints: 350.5, totalPoints: 6, bestSpeaker: "Javier Ríos" },
+            { id: '5', name: "Retórica Viva", institution: "Campus Sur", debates: 5, wins: 1, losses: 4, speakerPoints: 341.0, totalPoints: 3, bestSpeaker: "Lucía Fernández" }
         ];
 
         let teams = [];
+        let isAdmin = false;
+        const DEFAULT_PASS = "1234";
 
-        // Application Initialization
-        window.addEventListener('DOMContentLoaded', () => {
-            loadTeamsData();
-            renderPublicTable();
-            updateStats();
-        });
-
-        // Local Storage Management
-        function loadTeamsData() {
-            const saved = localStorage.getItem('debate_league_teams');
-            if (saved) {
+        // Load initialization
+        window.onload = function() {
+            const savedTeams = localStorage.getItem('debate_league_teams');
+            if (savedTeams) {
                 try {
-                    teams = JSON.parse(saved);
+                    teams = JSON.parse(savedTeams);
                 } catch (e) {
                     teams = [...initialTeams];
                 }
             } else {
                 teams = [...initialTeams];
-                saveTeamsData();
+                saveToLocalStorage();
+            }
+            renderTables();
+        };
+
+        function saveToLocalStorage() {
+            localStorage.setItem('debate_league_teams', JSON.stringify(teams));
+        }
+
+        function toggleAdminMode() {
+            if (isAdmin) {
+                isAdmin = false;
+                updateAdminUI();
+            } else {
+                document.getElementById('adminPasswordInput').value = '';
+                document.getElementById('passwordError').classList.add('hidden');
+                document.getElementById('passwordModal').classList.remove('hidden');
+                document.getElementById('adminPasswordInput').focus();
             }
         }
 
-        function saveTeamsData() {
-            localStorage.setItem('debate_league_teams', JSON.stringify(teams));
-            renderPublicTable();
-            updateStats();
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.add('hidden');
         }
 
-        // Calculation Helpers
-        function calculatePoints(wins) {
-            return wins * 3;
+        function verifyPassword() {
+            const input = document.getElementById('adminPasswordInput').value;
+            if (input === DEFAULT_PASS) {
+                isAdmin = true;
+                closePasswordModal();
+                updateAdminUI();
+            } else {
+                document.getElementById('passwordError').classList.remove('hidden');
+            }
         }
 
-        function getSortedTeams() {
-            return [...teams].sort((a, b) => {
-                const pointsA = calculatePoints(a.wins);
-                const pointsB = calculatePoints(b.wins);
-                if (pointsB !== pointsA) {
-                    return pointsB - pointsA;
-                }
+        function updateAdminUI() {
+            const badge = document.getElementById('adminBadge');
+            const adminActions = document.getElementById('adminActions');
+            const btnText = document.getElementById('adminBtnText');
+            const btnIcon = document.getElementById('adminBtnIcon');
+            const adminOnlyElements = document.querySelectorAll('.admin-only');
+
+            if (isAdmin) {
+                badge.classList.remove('hidden');
+                adminActions.classList.remove('hidden');
+                btnText.textContent = "Cerrar Sesión Admin";
+                btnIcon.className = "fa-solid fa-lock-open";
+                adminOnlyElements.forEach(el => el.classList.remove('hidden'));
+            } else {
+                badge.classList.add('hidden');
+                adminActions.classList.add('hidden');
+                btnText.textContent = "Panel Administrador";
+                btnIcon.className = "fa-solid fa-lock";
+                adminOnlyElements.forEach(el => el.classList.add('hidden'));
+            }
+            renderTables();
+        }
+
+        function renderTables() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const teamsTable = document.getElementById('teamsTableBody');
+            const speakersTable = document.getElementById('speakersTableBody');
+
+            // Sort teams: Wins desc, then Total Points desc, then Speaker Points desc
+            const sortedTeams = [...teams].sort((a, b) => {
+                if (b.wins !== a.wins) return b.wins - a.wins;
+                if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
                 return b.speakerPoints - a.speakerPoints;
             });
-        }
 
-        // Render Public Table View
-        function renderPublicTable() {
-            const tbody = document.getElementById('public-table-body');
-            const search = document.getElementById('search-input').value.toLowerCase();
-            const sorted = getSortedTeams();
-            
-            tbody.innerHTML = '';
+            const filteredTeams = sortedTeams.filter(t => 
+                t.name.toLowerCase().includes(searchTerm) || 
+                t.institution.toLowerCase().includes(searchTerm) ||
+                (t.bestSpeaker && t.bestSpeaker.toLowerCase().includes(searchTerm))
+            );
 
-            const filtered = sorted.filter(team => team.name.toLowerCase().includes(search));
+            document.getElementById('teamCountBadge').textContent = `${filteredTeams.length} Equipos`;
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="py-8 text-center text-slate-500 text-sm">
-                            No se encontraron equipos que coincidan con la búsqueda.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            filtered.forEach((team, index) => {
-                const totalDebates = team.wins + team.losses;
-                const totalPoints = calculatePoints(team.wins);
-                const rank = sorted.findIndex(t => t.id === team.id) + 1;
-
+            // Render Teams Table with readable alternating rows
+            teamsTable.innerHTML = '';
+            filteredTeams.forEach((team, index) => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-900/50 transition";
+                tr.className = index % 2 === 0 ? 'bg-white hover:bg-blue-50/40 transition-colors' : 'bg-slate-50/80 hover:bg-blue-50/40 transition-colors';
+                
+                let rankBadge = `<span class="font-bold text-slate-500">${index + 1}</span>`;
+                if (index === 0) rankBadge = `<span class="inline-flex items-center justify-center w-7 h-7 bg-amber-100 text-amber-700 font-bold rounded-full border border-amber-300 text-xs shadow-sm"><i class="fa-solid fa-crown text-amber-500 mr-0.5"></i>1</span>`;
+                else if (index === 1) rankBadge = `<span class="inline-flex items-center justify-center w-7 h-7 bg-slate-200 text-slate-700 font-bold rounded-full border border-slate-300 text-xs">2</span>`;
+                else if (index === 2) rankBadge = `<span class="inline-flex items-center justify-center w-7 h-7 bg-amber-700/10 text-amber-800 font-bold rounded-full border border-amber-600/30 text-xs">3</span>`;
+
                 tr.innerHTML = `
-                    <td class="py-3.5 px-4 text-center font-semibold text-slate-400">${rank}</td>
-                    <td class="py-3.5 px-4 font-medium text-slate-100">${escapeHtml(team.name)}</td>
-                    <td class="py-3.5 px-4 text-center text-slate-300">${totalDebates}</td>
-                    <td class="py-3.5 px-4 text-center text-emerald-400 font-medium">${team.wins}</td>
-                    <td class="py-3.5 px-4 text-center text-rose-400">${team.losses}</td>
-                    <td class="py-3.5 px-4 text-center text-slate-300">${team.speakerPoints.toFixed(1)}</td>
-                    <td class="py-3.5 px-4 text-center font-bold text-brand-500">${totalPoints}</td>
+                    <td class="py-3.5 px-4 text-center">${rankBadge}</td>
+                    <td class="py-3.5 px-6">
+                        <div class="font-bold text-slate-900">${escapeHtml(team.name)}</div>
+                        <div class="text-xs text-slate-500">${escapeHtml(team.institution)}</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center font-medium">${team.debates}</td>
+                    <td class="py-3.5 px-4 text-center font-semibold text-emerald-700">${team.wins}</td>
+                    <td class="py-3.5 px-4 text-center font-semibold text-rose-600">${team.losses}</td>
+                    <td class="py-3.5 px-4 text-center font-medium text-slate-700 bg-slate-100/50">${team.speakerPoints.toFixed(1)}</td>
+                    <td class="py-3.5 px-4 text-center font-extrabold text-blue-900 bg-blue-50/80">${team.totalPoints.toFixed(1)}</td>
+                    ${isAdmin ? `
+                    <td class="py-3.5 px-4 text-center space-x-1">
+                        <button onclick="editTeam('${team.id}')" class="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded transition-colors" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteTeam('${team.id}')" class="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-100 rounded transition-colors" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                    ` : ''}
                 `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Update Summary Cards
-        function updateStats() {
-            const sorted = getSortedTeams();
-            const totalTeams = teams.length;
-            
-            let totalDebates = 0;
-            let totalSpeaker = 0;
-
-            teams.forEach(t => {
-                totalDebates += (t.wins + t.losses);
-                totalSpeaker += t.speakerPoints;
+                teamsTable.appendChild(tr);
             });
 
-            const avgSpeaker = totalTeams > 0 ? (totalSpeaker / totalTeams).toFixed(1) : "0.0";
-            const leader = sorted.length > 0 ? sorted[0].name : "--";
+            // Speakers Data
+            const speakers = filteredTeams
+                .filter(t => t.bestSpeaker && t.bestSpeaker.trim() !== '')
+                .map(t => ({
+                    name: t.bestSpeaker,
+                    team: t.name,
+                    institution: t.institution,
+                    points: t.speakerPoints
+                }))
+                .sort((a, b) => b.points - a.points);
 
-            document.getElementById('stat-leader').textContent = leader;
-            document.getElementById('stat-total-teams').textContent = totalTeams;
-            document.getElementById('stat-total-debates').textContent = Math.floor(totalDebates / 2);
-            document.getElementById('stat-avg-speaker').textContent = avgSpeaker;
-        }
-
-        // Tab Switching Logic
-        function switchTab(tab) {
-            const rankingSec = document.getElementById('tab-ranking');
-            const rulesSec = document.getElementById('tab-rules');
-            const rankingControls = document.getElementById('ranking-controls');
-            const btnRanking = document.getElementById('tab-btn-ranking');
-            const btnRules = document.getElementById('tab-btn-rules');
-
-            if (tab === 'ranking') {
-                rankingSec.classList.remove('hidden');
-                rulesSec.classList.add('hidden');
-                rankingControls.classList.remove('hidden');
-
-                btnRanking.className = "px-4 py-2 text-sm font-medium rounded-lg bg-brand-700 text-white transition";
-                btnRules.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition";
-            } else {
-                rankingSec.classList.add('hidden');
-                rulesSec.classList.remove('hidden');
-                rankingControls.classList.add('hidden');
-
-                btnRules.className = "px-4 py-2 text-sm font-medium rounded-lg bg-brand-700 text-white transition";
-                btnRanking.className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition";
-            }
-        }
-
-        // Admin Auth & Modal Logic
-        function openAdminModal() {
-            document.getElementById('admin-pin-input').value = '';
-            document.getElementById('auth-error').classList.add('hidden');
-            document.getElementById('modal-auth').classList.remove('hidden');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('modal-auth').classList.add('hidden');
-        }
-
-        function verifyAdminPin() {
-            const pin = document.getElementById('admin-pin-input').value;
-            if (pin === '1234') {
-                closeAuthModal();
-                openAdminPanel();
-            } else {
-                document.getElementById('auth-error').classList.remove('hidden');
-            }
-        }
-
-        function openAdminPanel() {
-            renderAdminTable();
-            document.getElementById('modal-admin-panel').classList.remove('hidden');
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('modal-admin-panel').classList.add('hidden');
-            renderPublicTable();
-            updateStats();
-        }
-
-        // Admin Table Operations
-        function renderAdminTable() {
-            const tbody = document.getElementById('admin-table-body');
-            tbody.innerHTML = '';
-
-            teams.forEach(team => {
+            speakersTable.innerHTML = '';
+            speakers.forEach((sp, idx) => {
                 const tr = document.createElement('tr');
+                tr.className = idx % 2 === 0 ? 'bg-white hover:bg-blue-50/40 transition-colors' : 'bg-slate-50/80 hover:bg-blue-50/40 transition-colors';
                 tr.innerHTML = `
-                    <td class="py-2.5 px-3 font-medium text-slate-200">${escapeHtml(team.name)}</td>
-                    <td class="py-2.5 px-3 text-center">
-                        <input type="number" min="0" value="${team.wins}" onchange="updateTeamField('${team.id}', 'wins', this.value)" class="w-16 bg-slate-800 border border-slate-700 rounded px-2 py-1 text-center text-slate-200">
-                    </td>
-                    <td class="py-2.5 px-3 text-center">
-                        <input type="number" min="0" value="${team.losses}" onchange="updateTeamField('${team.id}', 'losses', this.value)" class="w-16 bg-slate-800 border border-slate-700 rounded px-2 py-1 text-center text-slate-200">
-                    </td>
-                    <td class="py-2.5 px-3 text-center">
-                        <input type="number" step="0.1" min="0" value="${team.speakerPoints}" onchange="updateTeamField('${team.id}', 'speakerPoints', this.value)" class="w-20 bg-slate-800 border border-slate-700 rounded px-2 py-1 text-center text-slate-200">
-                    </td>
-                    <td class="py-2.5 px-3 text-center">
-                        <button onclick="deleteTeam('${team.id}')" class="text-rose-400 hover:text-rose-300 font-medium px-2 py-1">Eliminar</button>
-                    </td>
+                    <td class="py-3.5 px-4 text-center font-bold text-slate-500">${idx + 1}</td>
+                    <td class="py-3.5 px-6 font-semibold text-slate-900">${escapeHtml(sp.name)}</td>
+                    <td class="py-3.5 px-6 text-xs text-slate-600">${escapeHtml(sp.team)} <span class="text-slate-400">(${escapeHtml(sp.institution)})</span></td>
+                    <td class="py-3.5 px-4 text-center font-bold text-blue-800 bg-blue-50/50">${sp.points.toFixed(1)}</td>
                 `;
-                tbody.appendChild(tr);
+                speakersTable.appendChild(tr);
             });
         }
 
-        function handleAddTeam(e) {
-            e.preventDefault();
-            const nameInput = document.getElementById('new-team-name');
-            const winsInput = document.getElementById('new-team-wins');
-            const lossesInput = document.getElementById('new-team-losses');
-            const speakerInput = document.getElementById('new-team-speaker');
-
-            const name = nameInput.value.trim();
-            if (!name) return;
-
-            const newTeam = {
-                id: Date.now().toString(),
-                name: name,
-                wins: parseInt(winsInput.value) || 0,
-                losses: parseInt(lossesInput.value) || 0,
-                speakerPoints: parseFloat(speakerInput.value) || 0
-            };
-
-            teams.push(newTeam);
-            saveTeamsData();
-            renderAdminTable();
-
-            nameInput.value = '';
-            winsInput.value = '0';
-            lossesInput.value = '0';
-            speakerInput.value = '0';
+        function filterData() {
+            renderTables();
         }
 
-        function updateTeamField(id, field, value) {
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Añadir Nuevo Equipo';
+            document.getElementById('editingTeamId').value = '';
+            document.getElementById('teamForm').reset();
+            document.getElementById('teamModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('teamModal').classList.add('hidden');
+        }
+
+        function editTeam(id) {
             const team = teams.find(t => t.id === id);
-            if (team) {
-                if (field === 'wins' || field === 'losses') {
-                    team[field] = parseInt(value) || 0;
-                } else if (field === 'speakerPoints') {
-                    team[field] = parseFloat(value) || 0;
-                }
-                saveTeamsData();
-            }
+            if (!team) return;
+
+            document.getElementById('modalTitle').textContent = 'Editar Equipo';
+            document.getElementById('editingTeamId').value = team.id;
+            document.getElementById('teamName').value = team.name;
+            document.getElementById('institution').value = team.institution;
+            document.getElementById('debatesCount').value = team.debates;
+            document.getElementById('winsCount').value = team.wins;
+            document.getElementById('lossesCount').value = team.losses;
+            document.getElementById('speakerPoints').value = team.speakerPoints;
+            document.getElementById('totalPoints').value = team.totalPoints;
+            document.getElementById('bestSpeaker').value = team.bestSpeaker || '';
+
+            document.getElementById('teamModal').classList.remove('hidden');
         }
 
         function deleteTeam(id) {
-            teams = teams.filter(t => t.id !== id);
-            saveTeamsData();
-            renderAdminTable();
+            if (confirm('¿Estás seguro de que deseas eliminar este equipo?')) {
+                teams = teams.filter(t => t.id !== id);
+                saveToLocalStorage();
+                renderTables();
+            }
         }
 
-        function resetDefaultData() {
-            teams = [...initialTeams];
-            saveTeamsData();
-            renderAdminTable();
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const editingId = document.getElementById('editingTeamId').value;
+            const newTeamData = {
+                id: editingId || Date.now().toString(),
+                name: document.getElementById('teamName').value.trim(),
+                institution: document.getElementById('institution').value.trim(),
+                debates: parseInt(document.getElementById('debatesCount').value) || 0,
+                wins: parseInt(document.getElementById('winsCount').value) || 0,
+                losses: parseInt(document.getElementById('lossesCount').value) || 0,
+                speakerPoints: parseFloat(document.getElementById('speakerPoints').value) || 0,
+                totalPoints: parseFloat(document.getElementById('totalPoints').value) || 0,
+                bestSpeaker: document.getElementById('bestSpeaker').value.trim()
+            };
+
+            if (editingId) {
+                teams = teams.map(t => t.id === editingId ? newTeamData : t);
+            } else {
+                teams.push(newTeamData);
+            }
+
+            saveToLocalStorage();
+            renderTables();
+            closeModal();
         }
 
-        // Import & Export Handlers
         function exportJSON() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(teams, null, 2));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "liga_debate_backup.json");
-            dlAnchorElem.click();
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "ranking_liga_debate.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function exportCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Nombre,Institucion,Debates,Ganados,Perdidos,PuntosOrador,PuntosTotales,OradorDestacado\n";
+
+            teams.forEach(t => {
+                csvContent += `"${t.name}","${t.institution}",${t.debates},${t.wins},${t.losses},${t.speakerPoints},${t.totalPoints},"${t.bestSpeaker || ''}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "ranking_liga_debate.csv");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
         }
 
         function importJSON(event) {
@@ -543,76 +503,27 @@ Ranking oficial Liga Interna CDC 2026
                     const imported = JSON.parse(e.target.result);
                     if (Array.isArray(imported)) {
                         teams = imported;
-                        saveTeamsData();
-                        renderAdminTable();
+                        saveToLocalStorage();
+                        renderTables();
+                        alert('Datos importados con éxito.');
+                    } else {
+                        alert('Formato de archivo inválido.');
                     }
                 } catch (err) {
-                    alert('Error al importar el archivo JSON.');
+                    alert('Error al leer el archivo JSON.');
                 }
             };
             reader.readAsText(file);
         }
 
-        function exportCSV() {
-            const sorted = getSortedTeams();
-            let csv = 'Posicion,Equipo,Debates,Ganados,Perdidos,Puntos Orador,Puntuacion Total\n';
-
-            sorted.forEach((team, index) => {
-                const totalDebates = team.wins + team.losses;
-                const totalPoints = calculatePoints(team.wins);
-                csv += `${index + 1},"${team.name.replace(/"/g, '""')}",${totalDebates},${team.wins},${team.losses},${team.speakerPoints},${totalPoints}\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "clasificacion_liga_debate.csv");
-            link.click();
-        }
-
-        function exportPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.setFontSize(16);
-            doc.text("Clasificación Oficial - Liga de Debate", 14, 20);
-            doc.setFontSize(10);
-            doc.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 28);
-
-            const sorted = getSortedTeams();
-            const tableData = sorted.map((team, index) => [
-                index + 1,
-                team.name,
-                team.wins + team.losses,
-                team.wins,
-                team.losses,
-                team.speakerPoints.toFixed(1),
-                calculatePoints(team.wins)
-            ]);
-
-            doc.autoTable({
-                startY: 34,
-                head: [['Pos', 'Equipo', 'Debates', 'Ganados', 'Perdidos', 'Pts. Orador', 'Puntuación']],
-                body: tableData,
-                theme: 'striped',
-                headStyles: { fillColor: [7, 89, 133] }
-            });
-
-            doc.save("clasificacion_liga_debate.pdf");
-        }
-
-        // Security Helper
-        function escapeHtml(str) {
-            return str.replace(/[&<>"']/g, function(m) {
-                return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                }[m];
-            });
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
     </script>
 </body>
