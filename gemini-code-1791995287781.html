@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking - Liga de Debate</title>
+    <!-- Tailwind CSS para un diseño moderno -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- PapaParse para leer archivos CSV de Google Sheets fácilmente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+    <!-- HEADER -->
+    <header class="bg-slate-800/80 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">🏛️</span>
+                <h1 class="text-xl font-bold tracking-tight text-white">Ranking Oficial - Liga de Debate</h1>
+            </div>
+            <div class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-full font-medium">
+                Sincronizado con Google Sheets
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
+
+        <!-- BUSCADOR -->
+        <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
+            <div class="w-full sm:w-80">
+                <input type="text" id="searchInput" placeholder="Buscar equipo..." 
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors">
+            </div>
+            <p class="text-xs text-slate-400">Los cambios realizados en la hoja de cálculo se reflejan al recargar la página.</p>
+        </div>
+
+        <!-- TABLA DE EQUIPOS -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-900/60 border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider font-semibold">
+                            <th class="py-4 px-6 text-center w-20">Pos.</th>
+                            <th class="py-4 px-6">Equipo</th>
+                            <th class="py-4 px-6 text-center">Vic.</th>
+                            <th class="py-4 px-6 text-center">Der.</th>
+                            <th class="py-4 px-6 text-center">Ptos. Orador</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTableBody" class="divide-y divide-slate-700/60 text-sm">
+                        <!-- Los datos se cargan dinámicamente desde Google Sheets -->
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-slate-400">Cargando datos desde la hoja de cálculo...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        Liga de Debate &bull; Todos los derechos reservados
+    </footer>
+
+    <!-- SCRIPT DE CONEXIÓN CON GOOGLE SHEETS -->
+    <script>
+        // ⚠️ PEGA AQUÍ TU ENLACE DE EXPORTACIÓN CSV DE GOOGLE SHEETS OBTENIDO EN EL PASO 3
+        const SHEET_CSV_URL = "PEGAR_AQUI_TU_ENLACE_CSV_DE_GOOGLE_SHEETS";
+
+        let equiposData = [];
+
+        function cargarDatosSheets() {
+            if (SHEET_CSV_URL.includes("PEGAR_AQUI")) {
+                document.getElementById('rankingTableBody').innerHTML = `
+                    <tr><td colspan="5" class="py-8 text-center text-amber-400 font-medium">
+                        ⚠️ Falta configurar el enlace CSV de Google Sheets en el archivo index.html
+                    </td></tr>`;
+                return;
+            }
+
+            Papa.parse(SHEET_CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    equiposData = results.data;
+                    renderizarTabla(equiposData);
+                },
+                error: function(err) {
+                    console.error("Error al cargar Google Sheets:", err);
+                    document.getElementById('rankingTableBody').innerHTML = `
+                        <tr><td colspan="5" class="py-8 text-center text-rose-400">
+                            Error al conectar con la hoja de cálculo. Comprueba que sea pública.
+                        </td></tr>`;
+                }
+            });
+        }
+
+        function renderizarTabla(datos) {
+            const tbody = document.getElementById('rankingTableBody');
+            tbody.innerHTML = '';
+
+            if (datos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No hay equipos registrados en la hoja.</td></tr>`;
+                return;
+            }
+
+            datos.forEach((eq, index) => {
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? 'bg-slate-800/30 hover:bg-slate-700/40 transition-colors' : 'bg-slate-800/70 hover:bg-slate-700/40 transition-colors';
+                
+                tr.innerHTML = `
+                    <td class="py-4 px-6 text-center font-bold text-slate-300">${eq.posicion || (index + 1)}</td>
+                    <td class="py-4 px-6 font-semibold text-white">${eq.equipo || 'Sin nombre'}</td>
+                    <td class="py-4 px-6 text-center text-emerald-400 font-medium">${eq.victorias || 0}</td>
+                    <td class="py-4 px-6 text-center text-rose-400 font-medium">${eq.derrotas || 0}</td>
+                    <td class="py-4 px-6 text-center text-indigo-300 font-bold">${eq.puntos || 0}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filtro de búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const texto = e.target.value.toLowerCase();
+            const filtrados = equiposData.filter(eq => eq.equipo && eq.equipo.toLowerCase().includes(texto));
+            renderizarTabla(filtrados);
+        });
+
+        // Cargar al iniciar la página
+        window.onload = cargarDatosSheets;
+    </script>
+</body>
+</html>
